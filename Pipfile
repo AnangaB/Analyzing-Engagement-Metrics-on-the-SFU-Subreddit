@@ -1,0 +1,110 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+black = "*"
+pyspark = "*"
+scipy = "*"
+textstat = "*"
+pandas = "*"
+matplotlib = "*"
+seaborn = "*"
+pyarrow = "*"
+numpy = "==1.26.4"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
+python_full_version = "3.10.1"
+
+[scripts]
+# fmt: off
+
+# ===== Miscellaneous =====
+# Format Code
+"format" = "black --line-length 79 src"
+
+# ===== Extract =====
+# Extract - SFU API: Courses And Instructors
+"extract:courses_and_instructors" = "python src/pipeline/1-extract/courses/extract_courses.py data/pipeline/1-extract/courses data/pipeline/1-extract/instructors"
+# Extract - Coursys: Instructors
+"extract:instructors_coursys" = "python src/pipeline/1-extract/instructors/extract_instructors_coursys.py data/pipeline/1-extract/instructors"
+
+# ===== Transform Part 1 =====
+# Transform - Reddit Submissions
+"transform:submissions" = "python src/pipeline/2-transform/reddit_simonfraser/remove_unengaged_deleted_submissions.py data/pipeline/1-extract/reddit_simonfraser/submissions data/pipeline/2-transform/reddit_simonfraser/submissions"
+# Transform - SFU API: Courses
+"transform:courses" = "python src/pipeline/2-transform/courses/create_unique_list_of_courses.py data/pipeline/1-extract/courses data/pipeline/2-transform/courses"
+# Transform - SFU API: Instructors (Fullname And Lastname)
+"transform:instructors_fullname" = "python src/pipeline/2-transform/instructors/get_instructors_full_name_from_sfuapi_dataset.py data/pipeline/1-extract/instructors data/pipeline/2-transform/instructors"
+"transform:instructors_lastname" = "python src/pipeline/2-transform/instructors/get_instructors_last_name_from_sfuapi_dataset.py data/pipeline/1-extract/instructors data/pipeline/2-transform/instructors"
+# Transform - Coursys: Instructors
+"transform:instructors_coursys" = "python src/pipeline/2-transform/instructors/remove_duplicate_instructors_coursys.py data/pipeline/1-extract/instructors/coursys instructors data/pipeline/2-transform/instructors"
+
+# ===== Transform Part 2: Transform To Keywords Analyzer Input Files =====
+# Transform To Keywords Input File - SFU API: Courses
+"transform:keywords:courses" = "python src/pipeline/2-transform/keywords/make_courses_keywords.py data/pipeline/2-transform/courses/unique_courses_offerings.csv data"
+# Transform To Keywords Input File - SFU API: Instructors (Fullname And Lastname)
+"transform:keywords:instructors_fullname" = "python src/pipeline/2-transform/keywords/make_instructor_full_name_keywords.py data/pipeline/2-transform/instructors/unique_instructors_full_name_sfuapi.csv data"
+"transform:keywords:instructors_lastname" = "python src/pipeline/2-transform/keywords/make_instructor_last_name_keywords.py data/pipeline/2-transform/instructors/unique_instructors_last_name_sfuapi.csv data"
+
+# ===== Analyze Readability =====
+# Analyze Readability
+"analyze:readability:score" = "python src/pipeline/3-analyze/readability.py data/pipeline/2-transform/reddit_simonfraser/submissions score"
+"analyze:readability:num_comments" = "python src/pipeline/3-analyze/readability.py data/pipeline/2-transform/reddit_simonfraser/submissions num_comments"
+
+# ===== Analyze Keywords Part 1: Initial Analysis =====
+# Analyze Keywords - General
+"analyze:keywords:general:score" = "python src/pipeline/3-analyze/keywords.py data/keywords_general.csv data/pipeline/3-analyze/keywords/general data/pipeline/2-transform/reddit_simonfraser/submissions score"
+"analyze:keywords:general:num_comments" = "python src/pipeline/3-analyze/keywords.py data/keywords_general.csv data/pipeline/3-analyze/keywords/general data/pipeline/2-transform/reddit_simonfraser/submissions num_comments"
+# Analyze Keywords - SFU API: Courses
+"analyze:keywords:courses:score" = "python src/pipeline/3-analyze/keywords.py data/keywords_courses.csv data/pipeline/3-analyze/keywords/courses data/pipeline/2-transform/reddit_simonfraser/submissions score"
+"analyze:keywords:courses:num_comments" = "python src/pipeline/3-analyze/keywords.py data/keywords_courses.csv data/pipeline/3-analyze/keywords/courses data/pipeline/2-transform/reddit_simonfraser/submissions num_comments"
+# Analyze Keywords - SFU API: Instructors (Fullname)
+"analyze:keywords:instructors_fullname:score" = "python src/pipeline/3-analyze/keywords.py data/keywords_instructor_fullname.csv data/pipeline/3-analyze/keywords/instructors_fullname data/pipeline/2-transform/reddit_simonfraser/submissions score"
+"analyze:keywords:instructors_fullname:num_comments" = "python src/pipeline/3-analyze/keywords.py data/keywords_instructor_fullname.csv data/pipeline/3-analyze/keywords/instructors_fullname data/pipeline/2-transform/reddit_simonfraser/submissions num_comments"
+# Analyze Keywords - SFU API: Instructors (Lastname)
+"analyze:keywords:instructors_lastname:score" = "python src/pipeline/3-analyze/keywords.py data/keywords_instructor_lastname.csv data/pipeline/3-analyze/keywords/instructors_lastname data/pipeline/2-transform/reddit_simonfraser/submissions score"
+"analyze:keywords:instructors_lastname:num_comments" = "python src/pipeline/3-analyze/keywords.py data/keywords_instructor_lastname.csv data/pipeline/3-analyze/keywords/instructors_lastname data/pipeline/2-transform/reddit_simonfraser/submissions num_comments"
+
+# ===== Analyze Keywords Part 2: Filter Results =====
+# Analyze Keywords Filter - General
+"analyze:keywords:general:score:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/general score"
+"analyze:keywords:general:num_comments:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/general num_comments"
+# Analyze Keywords Filter - SFU API: Courses
+"analyze:keywords:courses:score:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/courses score"
+"analyze:keywords:courses:num_comments:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/courses num_comments"
+# Analyze Keywords Filter - SFU API: Instructors (Fullname)
+"analyze:keywords:instructors_fullname:score:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/instructors_fullname score"
+"analyze:keywords:instructors_fullname:num_comments:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/instructors_fullname num_comments"
+# Analyze Keywords Filter - SFU API: Instructors (Lastname)
+"analyze:keywords:instructors_lastname:score:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/instructors_lastname score"
+"analyze:keywords:instructors_lastname:num_comments:filter" = "python src/pipeline/3-analyze/keywords_transform.py data/pipeline/3-analyze/keywords/instructors_lastname num_comments"
+
+# ===== Analyze Keywords Part 3: Compare Filter Results =====
+"analyze:keywords:general:filter_compare" = "python src/pipeline/3-analyze/compare_score_and_num_comments.py data/pipeline/3-analyze/keywords/general"
+"analyze:keywords:instructors_lastname:filter_compare" = "python src/pipeline/3-analyze/compare_score_and_num_comments.py data/pipeline/3-analyze/keywords/instructors_lastname"
+"analyze:keywords:instructors_fullname:filter_compare" = "python src/pipeline/3-analyze/compare_score_and_num_comments.py data/pipeline/3-analyze/keywords/instructors_fullname"
+"analyze:keywords:courses:filter_compare" = "python src/pipeline/3-analyze/compare_score_and_num_comments.py data/pipeline/3-analyze/keywords/courses"
+
+# ===== Plot =====
+# Plot Readability score
+"plot:readability:score" = "python src/pipeline/4-plot/readability_scatter.py score"
+"plot:readability:num_comments" = "python src/pipeline/4-plot/readability_scatter.py num_comments"
+# Plot Filtered Keywords - General
+"plot:keywords:general:score" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords general score data/pipeline/4-plot/keywords/general/score.png"
+"plot:keywords:general:num_comments" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords general num_comments data/pipeline/4-plot/keywords/general/num_comments.png"
+# Plot Filtered Keywords - SFU API: Courses
+"plot:keywords:courses:score" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords courses score data/pipeline/4-plot/keywords/courses/score.png"
+"plot:keywords:courses:num_comments" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords courses num_comments data/pipeline/4-plot/keywords/courses/num_comments.png"
+# Plot Filtered Keywords - SFU API: Instructors (Fullname)
+"plot:keywords:instructors_fullname:score" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords instructors_fullname score data/pipeline/4-plot/keywords/instructors_fullname/score.png"
+"plot:keywords:instructors_fullname:num_comments" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords instructors_fullname num_comments data/pipeline/4-plot/keywords/instructors_fullname/num_comments.png"
+# Plot Filtered Keywords - SFU API: Instructors (Lastname)
+"plot:keywords:instructors_lastname:score" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords instructors_lastname score data/pipeline/4-plot/keywords/instructors_lastname/score.png"
+"plot:keywords:instructors_lastname:num_comments" = "python src/pipeline/4-plot/keyword_bars.py data/pipeline/3-analyze/keywords instructors_lastname num_comments data/pipeline/4-plot/keywords/instructors_lastname/num_comments.png"
+# fmt: on
