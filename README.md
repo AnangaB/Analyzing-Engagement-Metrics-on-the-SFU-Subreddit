@@ -1,6 +1,18 @@
 # Analyzing Engagement Metrics on r/simonfraser
 Ananga Bajgai, Ewan Brinkman, and Ellie Neufeld
 
+# Introduction
+Our project investigates what leads to engagement among SFU Reddit posts (submissions). This can also help people who want to know what types of posts do well (and which don’t). To refine the topic more, our group ended up looking at posts’ score and number of comments as a metric of success. The score is the number of upvotes minus downvotes, but can’t be negative.
+
+We analyzed two major properties of submissions to see how they affect the score and number of comments:
+- The presence of keywords in the post title and body text. For example, comparing how posts that mention “UBC” affect the post score and number of comments, when compared with posts that do not mention “UBC”. Post keywords analyzed include:
+  - General keywords (ex. “raccoon”, “UBC”)
+  - Course id keywords (ex. “CMPT 105W”)
+  - Instructor full name keywords (ex. “Gregory Baker”)
+  - Instructor last name keywords (ex. “Fraser”)
+- The readability score of the body text
+
+
 # Setup
 
 Do the following:
